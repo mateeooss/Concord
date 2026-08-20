@@ -1,0 +1,55 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  position: relative;
+  border-radius: 50%;
+  opacity: .55;
+  transform: scale(1);
+  box-shadow: none;
+  transition: opacity .12s, transform .15s, box-shadow .12s;
+}
+
+.avatar.falando {
+  opacity: 1;
+  transform: scale(1.04);
+  box-shadow: 0 0 0 3px var(--roxo);
+}
+
+.iconeMutado {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--erro);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iconeMutado svg { width: 12px; height: 12px; }
+
+.nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto);
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar {
+    transition-duration: .01ms;
+  }
+  .avatar.falando {
+    transform: none;
+  }
+}

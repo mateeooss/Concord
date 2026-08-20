@@ -6,3 +6,9 @@ export const AVATAR_DIMENSAO = 256; // px, corte central quadrado
 export const AVATAR_QUALIDADE_WEBP = 0.85;
 
 export const COMPARTILHAMENTO_BITRATE_MAX = 10_000_000; // 10 Mbps
+
+export const OPCOES_AUDIO = {
+  echoCancellation: true,
+  noiseSuppression: true,
+  autoGainControl: true,
+} as const;
