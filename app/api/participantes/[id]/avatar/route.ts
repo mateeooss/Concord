@@ -17,7 +17,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   return new NextResponse(new Uint8Array(registro.avatar), {
     headers: {
       'Content-Type': registro.avatarMime,
-      'Cache-Control': 'private, max-age=31536000, must-revalidate',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
       ETag: etag,
     },
   });

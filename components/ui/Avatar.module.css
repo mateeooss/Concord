@@ -1,4 +1,5 @@
 .avatar {
+  position: relative;
   border-radius: 50%;
   overflow: hidden;
   background: var(--roxo);
@@ -10,8 +11,20 @@
   flex-shrink: 0;
 }
 
-.imagem {
+.imagem,
+.canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
+}
+
+.visivel {
+  display: block;
+}
+
+.oculto {
+  display: none;
 }

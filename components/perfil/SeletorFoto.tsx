@@ -26,6 +26,7 @@ export function SeletorFoto({ nome, onSelecionar, onErro }: Props) {
 
     try {
       const blob = await processarAvatar(arquivo);
+      onErro('');
       setPreview((anterior) => {
         if (anterior) URL.revokeObjectURL(anterior);
         return URL.createObjectURL(blob);
@@ -55,12 +56,12 @@ export function SeletorFoto({ nome, onSelecionar, onErro }: Props) {
       onClick={abrirSeletor}
       onKeyDown={lidarComTeclado}
     >
-      <Avatar nome={nome || '?'} src={preview ?? undefined} tamanho={64} />
+      <Avatar nome={nome || '?'} src={preview ?? undefined} tamanho={64} animar={true} />
       <span className={estilos.texto}>{preview ? 'Trocar foto' : 'Escolher foto'}</span>
       <input
         ref={inputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp"
+        accept="image/png,image/jpeg,image/webp,image/gif"
         className={estilos.entrada}
         onChange={(evento) => lidarComArquivo(evento.target.files?.[0])}
       />

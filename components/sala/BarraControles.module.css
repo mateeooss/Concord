@@ -7,31 +7,64 @@
   gap: 10px;
   background: var(--fundo-card);
   border-top: 1px solid var(--borda);
+  z-index: 10;
 }
 
-.botaoMic {
+.botaoControle {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  border: 1px solid transparent;
-  background: var(--roxo);
-  color: #fff;
+  border: 1px solid var(--borda);
+  background: var(--fundo-card);
+  color: var(--texto);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color .12s, border-color .12s, color .12s;
+  transition: background-color 0.12s, border-color 0.12s, color 0.12s;
 }
-.botaoMic svg {
+
+.botaoControle:hover:not(:disabled) {
+  border-color: var(--borda-forte);
+  background: var(--fundo-app);
+}
+
+.botaoControle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.botaoControle svg {
   width: 20px;
   height: 20px;
 }
-.botaoMic:disabled {
-  cursor: not-allowed;
-  opacity: .6;
+
+.botaoMicAtivo {
+  background: var(--roxo);
+  border-color: transparent;
+  color: #fff;
 }
-.botaoMic.mutado {
+
+.botaoMicAtivo:hover:not(:disabled) {
+  background: var(--roxo-hover);
+}
+
+.botaoMicMutado {
   background: var(--fundo-card);
   border-color: var(--erro-borda);
   color: var(--erro);
+}
+
+.botaoMicMutado:hover:not(:disabled) {
+  background: var(--erro-fundo);
+}
+
+.botaoTelaAtivo {
+  background: var(--roxo);
+  border-color: transparent;
+  color: #fff;
+}
+
+.botaoTelaAtivo:hover:not(:disabled) {
+  background: var(--roxo-hover);
 }

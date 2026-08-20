@@ -1,0 +1,71 @@
+.faixa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: var(--fundo-card);
+  border-bottom: 1px solid var(--borda);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  position: relative;
+  border-radius: 50%;
+  opacity: .55;
+  transform: scale(1);
+  box-shadow: none;
+  transition: opacity .12s, transform .15s, box-shadow .12s;
+}
+
+.avatar.falando {
+  opacity: 1;
+  transform: scale(1.06);
+  box-shadow: 0 0 0 2px var(--roxo);
+}
+
+.iconeMutado {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--erro);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconeMutado svg {
+  width: 8px;
+  height: 8px;
+}
+
+.nome {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--texto);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar {
+    transition-duration: .01ms;
+  }
+  .avatar.falando {
+    transform: none;
+  }
+}

@@ -1,29 +1,78 @@
 'use client';
 
 import { Track } from 'livekit-client';
-import { useTrackToggle } from '@livekit/components-react';
-import { OPCOES_AUDIO } from '@/lib/constantes';
-import { IconeMic, IconeMicCortado } from '@/components/ui/icones';
+import { useTrackToggle, useTracks } from '@livekit/components-react';
+import {
+  OPCOES_AUDIO,
+  COMPARTILHAMENTO_SCREEN_CAPTURE,
+  COMPARTILHAMENTO_PUBLISH_OPTIONS,
+} from '@/lib/constantes';
+import { IconeMic, IconeMicCortado, IconeTela } from '@/components/ui/icones';
 import estilos from './BarraControles.module.css';
 
 export function BarraControles() {
-  const { toggle, enabled, pending } = useTrackToggle({
+  const {
+    toggle: alternarMic,
+    enabled: micAtivo,
+    pending: micPendente,
+  } = useTrackToggle({
     source: Track.Source.Microphone,
     captureOptions: OPCOES_AUDIO,
   });
 
-  const classes = [estilos.botaoMic, !enabled && estilos.mutado].filter(Boolean).join(' ');
+  const {
+    toggle: alternarTela,
+    enabled: telaAtiva,
+    pending: telaPendente,
+  } = useTrackToggle({
+    source: Track.Source.ScreenShare,
+    captureOptions: COMPARTILHAMENTO_SCREEN_CAPTURE,
+    publishOptions: COMPARTILHAMENTO_PUBLISH_OPTIONS,
+  });
+
+  const faixasTela = useTracks([Track.Source.ScreenShare]);
+  const faixaAtiva = faixasTela[0];
+  const outroCompartilhando = Boolean(faixaAtiva && !faixaAtiva.participant.isLocal);
+  const nomeApresentador = faixaAtiva?.participant.name || 'Outro participante';
+
+  const classesMic = [
+    estilos.botaoControle,
+    micAtivo ? estilos.botaoMicAtivo : estilos.botaoMicMutado,
+  ].join(' ');
+
+  const classesTela = [
+    estilos.botaoControle,
+    telaAtiva && estilos.botaoTelaAtivo,
+  ].filter(Boolean).join(' ');
+
+  const tituloTela = outroCompartilhando
+    ? `${nomeApresentador} está compartilhando a tela.`
+    : telaAtiva
+    ? 'Parar compartilhamento de tela'
+    : 'Compartilhar tela';
 
   return (
     <div className={estilos.barra}>
       <button
         type="button"
-        className={classes}
-        onClick={() => toggle()}
-        disabled={pending}
-        aria-label={enabled ? 'Mutar microfone' : 'Ativar microfone'}
+        className={classesMic}
+        onClick={() => alternarMic()}
+        disabled={micPendente}
+        aria-label={micAtivo ? 'Mutar microfone' : 'Ativar microfone'}
+        title={micAtivo ? 'Mutar microfone' : 'Ativar microfone'}
       >
-        {enabled ? <IconeMic /> : <IconeMicCortado />}
+        {micAtivo ? <IconeMic /> : <IconeMicCortado />}
+      </button>
+
+      <button
+        type="button"
+        className={classesTela}
+        onClick={() => alternarTela()}
+        disabled={telaPendente || outroCompartilhando}
+        aria-label={tituloTela}
+        title={tituloTela}
+      >
+        <IconeTela />
       </button>
     </div>
   );

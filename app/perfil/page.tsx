@@ -36,13 +36,16 @@ export default function PaginaPerfil() {
     const dados = new FormData();
     dados.set('deviceId', obterDeviceId());
     dados.set('nome', nome.trim());
-    dados.set('avatar', avatar, 'avatar.webp');
+    const nomeArquivo = avatar.type === 'image/gif' ? 'avatar.gif' : 'avatar.webp';
+    dados.set('avatar', avatar, nomeArquivo);
 
     try {
       const resposta = await fetch('/api/participantes', { method: 'POST', body: dados });
       if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);
-        mostrarToast(corpo?.erro ?? 'Não foi possível salvar o perfil. Tente de novo.');
+        const msgErro = corpo?.erro ?? 'Não foi possível salvar o perfil. Tente de novo.';
+        setErro(msgErro);
+        mostrarToast(msgErro);
         return;
       }
       router.replace('/sala');
@@ -58,7 +61,14 @@ export default function PaginaPerfil() {
       <form className={`card ${estilos.cartao}`} onSubmit={enviar}>
         <h1 className={estilos.titulo}>Seu perfil</h1>
 
-        <SeletorFoto nome={nome} onSelecionar={setAvatar} onErro={setErro} />
+        <SeletorFoto
+          nome={nome}
+          onSelecionar={(blob) => {
+            setAvatar(blob);
+            setErro(null);
+          }}
+          onErro={(msg) => setErro(msg || null)}
+        />
 
         <div className={estilos.campo}>
           <label className={estilos.rotulo} htmlFor="nome">

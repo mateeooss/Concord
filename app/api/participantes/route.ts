@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { criarOuAtualizarParticipante } from '@/lib/db/queries';
 import { AVATAR_TAMANHO_MAX_SERVIDOR } from '@/lib/constantes';
 
-const TIPOS_ACEITOS = ['image/png', 'image/jpeg', 'image/webp'];
+const TIPOS_ACEITOS = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 
 export async function POST(request: NextRequest) {
   const dados = await request.formData();
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ erro: 'Formato de imagem não suportado.' }, { status: 400 });
   }
   if (avatar.size > AVATAR_TAMANHO_MAX_SERVIDOR) {
-    return NextResponse.json({ erro: 'Imagem inválida. Tente novamente.' }, { status: 400 });
+    return NextResponse.json({ erro: 'Imagem acima de 15 MB. Escolha um arquivo menor.' }, { status: 400 });
   }
 
   const buffer = Buffer.from(await avatar.arrayBuffer());

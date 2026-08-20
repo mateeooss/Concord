@@ -93,16 +93,104 @@ O app conectava ao WebSocket de sinalização do LiveKit, mas falhava com `Conne
 
 ---
 
-## 5. Arquivos Modificados / Criados na Fase 4
+## 5. Implementação da Fase 5 — Compartilhamento de Tela
 
-- `lib/ngrok.ts` (novo)
-- `app/api/ngrok/route.ts` (novo)
-- `components/ui/icones.tsx`
-- `components/header/Header.module.css` (novo)
-- `components/header/Header.tsx` (novo)
-- `styles/globals.css`
-- `app/layout.tsx`
-- `app/perfil/page.module.css`
-- `components/sala/Sala.module.css`
-- `agy.md`
+### O que foi feito:
+1. **Configuração de Captura e Publicação (`lib/constantes.ts`):**
+   - Definidas as constantes `COMPARTILHAMENTO_SCREEN_CAPTURE` (`contentHint: 'detail'`, até 1440p @ 30fps) e `COMPARTILHAMENTO_PUBLISH_OPTIONS` (codec VP9 com fallback VP8, teto de 10 Mbps via `COMPARTILHAMENTO_BITRATE_MAX`, sem simulcast).
+
+2. **Trava de Compartilhamento Exclusivo (`components/sala/BarraControles.tsx`):**
+   - Adicionado botão de tela (40×40px) com ícone SVG `IconeTela`.
+   - Se outro participante estiver apresentando, o botão fica desabilitado com tooltip descritivo: `"{Nome} está compartilhando a tela."`.
+   - Se o próprio usuário estiver apresentando, o botão fica roxo ativo e o clique encerra a transmissão.
+
+3. **Layout Alternativo de Apresentação (`components/sala/Sala.tsx`):**
+   - Transição dinâmica entre o modo Grid (sem tela) e o modo Apresentação (com tela).
+   - **`components/sala/FaixaAvatares.tsx`:** Faixa horizontal compacta no topo com avatares de 24px, anéis de fala responsivos e nomes dos participantes.
+   - **`components/sala/TelaCompartilhada.tsx`:** Reprodutor de vídeo com fundo `--video-bg` (`#1a1820`), raio de 12px, `object-fit: contain` e pílula estilizada com o nome do apresentador no canto inferior esquerdo.
+
+---
+
+## 6. Diagnósticos e Correções: Firefox WebRTC e Dimensionamento de Vídeo
+
+### 1. Espelhamento Infinito e Vídeo Cortado
+- **Espelhamento Infinito:** Ocorre quando se compartilha a tela inteira contendo a própria janela do Concord em exibição (efeito "espelho no espelho"). Para testar a nitidez sem loop visual, deve-se compartilhar uma janela de outro aplicativo (ex: VS Code, Bloco de notas, navegador com outra aba aberta).
+- **Vídeo Cortado no Topo:** Em containers Flexbox, elementos `<video>` com dimensões nativas 1440p expandem a altura intrínseca além da viewport se não possuírem limites estritos de `min-height: 0` e `max-height: 100%`.
+- **Correção:** Ajustado `TelaCompartilhada.module.css` para `min-height: 0; min-width: 0;` e `.video` com `max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;`, além de travar a altura útil em `Sala.module.css` em `height: calc(100vh - 52px)`.
+
+### 2. Firefox WebRTC e Microfone (`ConnectionError: could not establish pc connection`)
+- **Causa:** O motor WebRTC do Firefox apresenta instabilidade com a estratégia de conexão única (`singlePeerConnection: true`) e falhava ao receber `backupCodec` duplicado para telas. Além disso, no Windows, o driver de áudio bloqueia a segunda aba de obter o microfone (`NotReadableError` / `DeviceInUse`).
+- **Correção:** Em `lib/constantes.ts`, removemos o `backupCodec` mantendo apenas 1 codificador único de alta performance (VP9 no Chrome, VP8 no Firefox a 10 Mbps). Em `components/sala/Sala.tsx`, configuramos `singlePeerConnection: false` (canais publisher/subscriber dedicados e estáveis), `peerConnectionTimeout: 30_000` (30s para handshake ICE) e `audioCaptureDefaults: OPCOES_AUDIO` com `dynacast: true`.
+
+---
+
+## 7. Funcionalidade Extra: Avatar em GIF Animado por Voz (Voice-Activated GIF)
+
+### O que foi feito:
+1. **Suporte a GIF no Upload (`lib/imagem.ts` & `app/api/participantes/route.ts`):**
+   - Adicionado suporte ao formato `image/gif` com teto de até 15 MB (`AVATAR_TAMANHO_MAX_SERVIDOR` e `AVATAR_TAMANHO_MAX_CLIENTE`).
+   - GIFs animados preservam todas as suas camadas de frames sem re-encode com perda.
+   - Imagens estáticas (PNG, JPEG, WebP) continuam sendo recortadas e otimizadas em WebP 256×256.
+   - Limpeza automática de mensagens de erro na interface ao selecionar um arquivo válido.
+
+2. **Congelamento Inteligente no Frame 0 (`components/ui/Avatar.tsx`):**
+   - Ao carregar a imagem do avatar, um `<canvas>` 2D em memória captura o frame inicial (frame 0).
+   - **Em Silêncio / Mutado (`animar: false`):** O avatar exibe o primeiro frame estático perfeitamente congelado.
+   - **Falando (`animar: true`):** Quando a detecção de voz do LiveKit ativa (`falando && !isMuted`), o componente exibe a tag `<img>` animada rodando o GIF em tempo real.
+   - **Transição Instantânea:** Como ambos os elementos estão prontos no cliente, a transição entre o estado congelado e o GIF em movimento é imediata.
+
+3. **Integração nas Visualizações (`components/sala/Avatar.tsx` & `FaixaAvatares.tsx`):**
+   - Aplicado tanto no Grid principal de 96px quanto na faixa superior de 24px durante o compartilhamento de tela.
+   - Preview no seletor de foto do perfil com animação contínua para conferência do usuário.
+
+---
+
+## 8. Correção: Envio do Campo `nome` no FormData do Perfil
+
+### Problema
+Ao tentar salvar o perfil no `/perfil`, a API retornava erro `HTTP 400: Nome obrigatório.` mesmo com o campo de nome devidamente preenchido.
+
+### Causa
+Na função `enviar()` de `app/perfil/page.tsx`, a linha que anexava o nome ao `FormData` (`dados.set('nome', ...)`) havia sido omitida durante a refatoração do nome de arquivo dinâmico (`avatar.gif` / `avatar.webp`).
+
+### Correção
+Restaurado `dados.set('nome', nome.trim())` no `FormData` antes do envio para `/api/participantes`.
+
+---
+
+## 9. Correção: Revalidação de Cache de Avatar e Renderização de Imagens em Cache
+
+### Problema
+Ao trocar a foto de perfil por um novo arquivo (ou GIF) e entrar na sala, o avatar continuava exibindo a imagem antiga.
+
+### Causas
+1. **Cache HTTP Agressivo no Navegador:** Na rota `app/api/participantes/[id]/avatar/route.ts`, o cabeçalho `Cache-Control` estava configurado com `max-age=31536000` (1 ano). Como a URL (`/api/participantes/[id]/avatar`) não mudava, o navegador utilizava a imagem antiga salva no disco/memória local sem consultar o servidor.
+2. **Ciclo de Vida do `onLoad` em Imagens em Cache:** No componente `Avatar.tsx`, quando a imagem já estava carregada no cache do navegador antes do listener `onLoad` ser registrado, o evento não disparava novamente, mantendo o canvas em estado não-inicializado.
+
+### Correções
+1. Alterado `Cache-Control` na rota do avatar para `no-store, no-cache, must-revalidate`. O navegador agora revalida com `ETag` (que contém o timestamp `vistoEm` atualizado no banco SQLite), recebendo a nova foto imediatamente ao trocar de perfil.
+2. No `Avatar.tsx`, adicionada checagem no `useEffect` para `if (img.complete && img.naturalWidth > 0) desenharPrimeiroFrame()`, além de manter a tag `<img>` visível como fallback até a conclusão do desenho do frame no canvas.
+3. Adicionado timestamp de sessão `?t=${participant.joinedAt}` nas tags de imagem para invalidar o cache de memória do Chrome de forma determinística.
+
+---
+
+## 10. Melhorias na Apresentação: Modo Tela Cheia e Eliminação de Scroll Vertical
+
+### O que foi feito:
+1. **Eliminação de Rolagem Vertical:**
+   - Ajustadas as margens em `TelaCompartilhada.module.css` (`margin: 8px 16px;`) e o padding do rodapé (`trocar: 4px;`) para que o reprodutor de vídeo e a faixa superior caibam 100% no espaço visível sem ativar barra de rolagem vertical no navegador.
+   - Configurado `.shell-global` com `height: 100vh; height: 100dvh; overflow: hidden;` e `.shell` com `height: 100%;`.
+2. **Botão de Tela Cheia (Fullscreen):**
+   - Adicionado botão no canto superior direito do vídeo com ícones `IconeMaximizar` e `IconeMinimizar`.
+   - Adicionado atalho de **clique duplo no vídeo** para alternar tela cheia instantaneamente.
+   - Suporte a `fullscreenchange` para sincronizar o estado visual do botão ao entrar ou sair do modo tela cheia pelo teclado (`Esc`).
+
+---
+
+## 11. Expansão e Escala Inteligente de Vídeo na Tela Cheia
+
+### O que foi feito:
+- Em `TelaCompartilhada.module.css`, configurado `width: 100%; height: 100%; object-fit: contain;` e `.container:fullscreen .video { width: 100vw; height: 100vh; }`.
+- **Comportamento:** Qualquer transmissão com resolução inferior à tela ou de proporções variadas agora escala automaticamente até encostar nas bordas horizontais ou verticais da tela sem distorção, ocupando todo o monitor no modo tela cheia.
+
 

@@ -1,17 +1,12 @@
 'use client';
 
 import { Track, type Participant } from 'livekit-client';
-import { useIsSpeaking, useTrackMutedIndicator } from '@livekit/components-react';
+import { useParticipants, useIsSpeaking, useTrackMutedIndicator } from '@livekit/components-react';
 import { Avatar as AvatarBase } from '@/components/ui/Avatar';
 import { IconeMicCortado } from '@/components/ui/icones';
-import estilos from './Avatar.module.css';
+import estilos from './FaixaAvatares.module.css';
 
-type Props = {
-  participant: Participant;
-  tamanho: number;
-};
-
-export function Avatar({ participant, tamanho }: Props) {
+function ItemFaixa({ participant }: { participant: Participant }) {
   const falando = useIsSpeaking(participant);
   const { isMuted } = useTrackMutedIndicator({ participant, source: Track.Source.Microphone });
 
@@ -19,7 +14,7 @@ export function Avatar({ participant, tamanho }: Props) {
 
   return (
     <div className={estilos.item}>
-      <div className={classes} style={{ width: tamanho, height: tamanho }}>
+      <div className={classes} style={{ width: 24, height: 24 }}>
         <AvatarBase
           nome={participant.name || '?'}
           src={
@@ -27,7 +22,7 @@ export function Avatar({ participant, tamanho }: Props) {
               ? `/api/participantes/${participant.identity}/avatar?t=${participant.joinedAt?.getTime() ?? 0}`
               : undefined
           }
-          tamanho={tamanho}
+          tamanho={24}
           animar={falando && !isMuted}
         />
         {isMuted && (
@@ -37,6 +32,18 @@ export function Avatar({ participant, tamanho }: Props) {
         )}
       </div>
       <span className={estilos.nome}>{participant.name}</span>
+    </div>
+  );
+}
+
+export function FaixaAvatares() {
+  const participantes = useParticipants();
+
+  return (
+    <div className={estilos.faixa}>
+      {participantes.map((participante) => (
+        <ItemFaixa key={participante.identity} participant={participante} />
+      ))}
     </div>
   );
 }

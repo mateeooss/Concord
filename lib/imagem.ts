@@ -1,18 +1,27 @@
-import { AVATAR_DIMENSAO, AVATAR_QUALIDADE_WEBP, AVATAR_TAMANHO_MAX_CLIENTE } from './constantes';
+import {
+  AVATAR_DIMENSAO,
+  AVATAR_QUALIDADE_WEBP,
+  AVATAR_TAMANHO_MAX_CLIENTE,
+  AVATAR_TAMANHO_MAX_SERVIDOR,
+} from './constantes';
 
-const TIPOS_ACEITOS = ['image/png', 'image/jpeg', 'image/webp'];
+const TIPOS_ACEITOS = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 
 export function validarImagem(arquivo: File): string | null {
   if (!TIPOS_ACEITOS.includes(arquivo.type)) {
-    return 'Formato não suportado. Escolha uma imagem PNG, JPEG ou WebP.';
+    return 'Formato não suportado. Escolha uma imagem PNG, JPEG, WebP ou GIF.';
   }
   if (arquivo.size > AVATAR_TAMANHO_MAX_CLIENTE) {
-    return 'Imagem acima de 5 MB. Escolha um arquivo menor.';
+    return 'Imagem acima de 15 MB. Escolha um arquivo menor.';
   }
   return null;
 }
 
 export async function processarAvatar(arquivo: File): Promise<Blob> {
+  if (arquivo.type === 'image/gif') {
+    return arquivo;
+  }
+
   const bitmap = await createImageBitmap(arquivo);
   const lado = Math.min(bitmap.width, bitmap.height);
   const origemX = (bitmap.width - lado) / 2;
@@ -32,3 +41,4 @@ export async function processarAvatar(arquivo: File): Promise<Blob> {
     );
   });
 }
+
