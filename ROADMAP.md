@@ -54,6 +54,18 @@ O grid vira misto: quem está com câmera mostra vídeo, quem não está mostra
 avatar. O anel de fala continua valendo nos dois. Exige repensar o layout do
 grid, que hoje assume círculos de tamanho igual.
 
+### Túnel via SDK do ngrok
+
+Trocar o processo separado do ngrok pelo `@ngrok/ngrok`, subindo o túnel de
+dentro do Node. Elimina um dos três processos e a consulta a
+`127.0.0.1:4040` — a URL vem direto de `ngrok.connect()`.
+
+Só a fase 4 muda; `GET /api/ngrok` continua devolvendo `{ estado, url }`.
+
+Cuidados: o hot reload do Next pode derrubar e recriar o túnel, e a URL
+gratuita muda a cada reconexão. Guardar a instância num global e usar
+`instrumentation.ts` para garantir execução única.
+
 ### Ajuste de volume por participante
 
 Slider individual no hover do avatar. `RemoteAudioTrack.setVolume()`.

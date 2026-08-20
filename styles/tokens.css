@@ -1,0 +1,85 @@
+:root {
+  /* Marca */
+  --roxo:            #7c5cbf;
+  --roxo-hover:      #6b4daa;
+  --roxo-suave:      #f0ecf6;
+  --roxo-suave-2:    #f8f6fc;
+  --roxo-borda:      #e6dff5;
+
+  /* Superfícies */
+  --fundo-app:       #f8f7fa;
+  --fundo-card:      #ffffff;
+  --fundo-sutil:     #faf9fc;
+  --fundo-input:     #f8f7fa;
+  --header:          #2d1f3d;
+  --header-texto:    #f0ecf4;
+  --header-texto-2:  #c5bdd0;
+  --video-bg:        #1a1820;
+
+  /* Texto */
+  --texto:           #3a3540;
+  --texto-2:         #9590a0;
+  --texto-3:         #b5b0bc;
+
+  /* Bordas */
+  --borda:           #ddd8e0;
+  --borda-forte:     #c5c0cc;
+  --borda-suave:     #ece9f1;
+
+  /* Estados */
+  --erro:            #d05040;
+  --erro-borda:      #f5c6c0;
+  --erro-fundo:      #fef2f0;
+  --ok:              #5a8a52;
+  --ok-fundo:        #eef6ec;
+  --ok-borda:        #c3debb;
+  --aviso:           #b07a2a;
+  --aviso-fundo:     #fdf6ea;
+  --aviso-borda:     #f0dfc0;
+  --desabilitado:    #c5c0cc;
+
+  /* Sombras */
+  --sombra-card:     0 2px 8px rgba(60, 50, 80, 0.06);
+  --sombra-dropdown: 0 6px 20px rgba(60, 50, 80, 0.12);
+  --sombra-toast:    0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-tema="escuro"] {
+  --roxo:            #9b7fd4;
+  --roxo-hover:      #ab92dd;
+  --roxo-suave:      #2a2336;
+  --roxo-suave-2:    #241f2e;
+  --roxo-borda:      #3a3049;
+
+  --fundo-app:       #16141a;
+  --fundo-card:      #1e1b24;
+  --fundo-sutil:     #232029;
+  --fundo-input:     #232029;
+  --header:          #2d1f3d;
+  --header-texto:    #f0ecf4;
+  --header-texto-2:  #c5bdd0;
+  --video-bg:        #100e14;
+
+  --texto:           #e8e4ee;
+  --texto-2:         #9b95a6;
+  --texto-3:         #6f6a7a;
+
+  --borda:           #322d3a;
+  --borda-forte:     #443d4f;
+  --borda-suave:     #282430;
+
+  --erro:            #e57363;
+  --erro-borda:      #5c322c;
+  --erro-fundo:      #2a1c1a;
+  --ok:             #7fae76;
+  --ok-fundo:        #1c2a1a;
+  --ok-borda:        #35502e;
+  --aviso:           #d1a05a;
+  --aviso-fundo:     #2a2318;
+  --aviso-borda:     #4d3f22;
+  --desabilitado:    #443d4f;
+
+  --sombra-card:     0 2px 8px rgba(0, 0, 0, 0.3);
+  --sombra-dropdown: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --sombra-toast:    0 4px 12px rgba(0, 0, 0, 0.5);
+}

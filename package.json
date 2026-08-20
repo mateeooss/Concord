@@ -1,0 +1,33 @@
+{
+  "name": "concord",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "tsx lib/db/migrar.ts",
+    "dev": "next dev",
+    "prestart": "tsx lib/db/migrar.ts",
+    "start": "next start",
+    "build": "next build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx lib/db/migrar.ts"
+  },
+  "dependencies": {
+    "next": "^15",
+    "react": "^19",
+    "react-dom": "^19",
+    "livekit-client": "^2",
+    "@livekit/components-react": "^2",
+    "livekit-server-sdk": "^2",
+    "better-sqlite3": "^11",
+    "drizzle-orm": "^0.36"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/better-sqlite3": "^7",
+    "typescript": "^5",
+    "drizzle-kit": "^0.28",
+    "tsx": "^4"
+  }
+}
