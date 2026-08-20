@@ -33,14 +33,54 @@ Nenhuma linha de front muda. É por isso que a arquitetura é SFU desde o começ
 
 ## Curto prazo
 
-### Múltiplas salas
+### Canal de eventos em tempo real (SSE)
 
-O schema já suporta (`salas` + `mensagens.salaId`). Falta:
+Peça compartilhada pelos dois itens abaixo — sem ela, nenhum dos dois tem
+como saber "quem está online" ou "chegou mensagem nova" fora de uma conexão
+LiveKit específica (que só existe pra quem já está numa chamada).
 
-- Rota `/sala/[slug]`
-- Lista de salas na UI, com contagem de gente em cada
-- Criar e apagar sala (só host)
-- Trocar de sala sem recarregar a página
+- Uma conexão `EventSource` por aba, aberta no **shell geral do app** —
+  acima de `Sala`/`LiveKitRoom`, nunca dentro do painel de chat nem da sala
+  de voz. Fica de pé com o painel fechado e sem nenhuma chamada ativa.
+- Identificação via `deviceId` na query string (`GET
+  /api/eventos?deviceId=...`) — mesmo padrão já usado em `GET /api/sessao`.
+  `EventSource` só aceita URL, não dá pra mandar header custom.
+- **Presença** por ciclo de vida da conexão: `Map<deviceId, conexão>` em
+  memória no servidor — abriu é online, fechou (`req.on('close')`) é
+  offline. Sem heartbeat; entra depois, condicional, só se o problema do
+  "fantasma" (desconexão abrupta que demora a cair) doer de verdade — mesmo
+  espírito do item TURN acima.
+- **Escrita continua só por `POST /api/mensagens`**, como já é hoje — o SSE
+  nunca escreve, só notifica quem está com a conexão aberta. Mesma regra de
+  fonte única da Fase 7 do `PLAN.md`.
+- Um broadcast só alcança todo mundo conectado, não por sala: o cliente
+  filtra por `salaId` — atualiza o painel se for o canal aberto, incrementa
+  o contador de não lidas se for outro.
+
+### Múltiplas salas e Sidebar de canais (estilo Discord)
+
+Evolução do layout para barra lateral fixa (~220px) com lista de canais categorizados:
+
+- **Canais de Texto:** Operam de forma independente da voz — mensagens entregues via o canal de eventos acima, não pelo LiveKit. Permite ler e enviar mensagens em qualquer canal de texto enquanto conversa em qualquer canal de voz.
+- **Canais de Voz:** Mostram a lista de quem está conectado e falando diretamente na árvore da sidebar.
+- **Rota `/sala/[slug]`:** Navegação entre canais sem recarregar a página.
+- **Gestão de Salas:** Criar, renomear e apagar canais com controle restrito ao Host.
+- **Card de Estado da Voz:** No rodapé da sidebar, com ícone de status (cor `--ok`, sem emoji — ver `DESIGN-SYSTEM.md` §9), canal ativo, indicador de qualidade de conexão e botão de desconectar.
+
+Em aberto: `salas` hoje não distingue tipo — cada linha é voz e texto
+grudados na mesma entidade (`lib/db/schema.ts`). Pra ter canal de texto sem
+voz associada (ou vice-versa) precisa de uma coluna `tipo` nova (`'texto' |
+'voz'`, ou parecido) em `salas` antes disso virar spec.
+
+### Entrar/sair da chamada de voz sob demanda
+
+Hoje `Sala.tsx` conecta ao LiveKit e já entra na chamada de voz imediatamente ao carregar a tela (`<LiveKitRoom connect audio={OPCOES_AUDIO}>`).
+
+Com a separação por demanda:
+- **Modo Desconectado (Padrão):** O usuário entra no app, navega pelo chat de texto e visualiza quem está online sem abrir microfone nem consumir banda WebRTC — presença vem do canal de eventos acima, não do LiveKit.
+- **Clique no Canal de Voz:** Inicia o handshake do LiveKit conectando apenas à sala de voz selecionada.
+- **Troca de Canal:** Clicar em outro canal de voz desconecta da sala anterior e conecta na nova sem precisar recarregar o navegador.
+- **Botão de Desconectar:** Desliga a chamada de voz mantendo a navegação e o chat de texto ativos.
 
 ### Push-to-talk
 

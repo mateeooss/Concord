@@ -1,13 +1,13 @@
 'use client';
 
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { validarImagem, processarAvatar } from '@/lib/imagem';
+import { validarImagem, processarAvatar, type AvatarProcessado } from '@/lib/imagem';
 import { Avatar } from '@/components/ui/Avatar';
 import estilos from './SeletorFoto.module.css';
 
 type Props = {
   nome: string;
-  onSelecionar: (arquivo: Blob) => void;
+  onSelecionar: (dados: AvatarProcessado) => void;
   onErro: (mensagem: string) => void;
 };
 
@@ -25,13 +25,13 @@ export function SeletorFoto({ nome, onSelecionar, onErro }: Props) {
     }
 
     try {
-      const blob = await processarAvatar(arquivo);
+      const processado = await processarAvatar(arquivo);
       onErro('');
       setPreview((anterior) => {
         if (anterior) URL.revokeObjectURL(anterior);
-        return URL.createObjectURL(blob);
+        return URL.createObjectURL(processado.avatar);
       });
-      onSelecionar(blob);
+      onSelecionar(processado);
     } catch {
       onErro('Não foi possível processar essa imagem. Tente outra.');
     }

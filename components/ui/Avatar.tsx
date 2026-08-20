@@ -1,67 +1,84 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import estilos from './Avatar.module.css';
 
 type Props = {
   nome: string;
   src?: string;
+  srcAnimado?: string;
   tamanho: number;
   animar?: boolean;
 };
 
-export function Avatar({ nome, src, tamanho, animar = false }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
-  const [carregada, setCarregada] = useState(false);
-
-  const desenharPrimeiroFrame = useCallback(() => {
-    const img = imgRef.current;
-    const canvas = canvasRef.current;
-    if (!img || !canvas || !img.naturalWidth) return;
-
-    canvas.width = tamanho;
-    canvas.height = tamanho;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const lado = Math.min(img.naturalWidth, img.naturalHeight);
-      const sx = (img.naturalWidth - lado) / 2;
-      const sy = (img.naturalHeight - lado) / 2;
-      ctx.drawImage(img, sx, sy, lado, lado, 0, 0, tamanho, tamanho);
-      setCarregada(true);
-    }
-  }, [tamanho]);
+export function Avatar({ nome, src, srcAnimado, tamanho, animar = false }: Props) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [cicloAnimacao, setCicloAnimacao] = useState(0);
+  const baixandoRef = useRef(false);
 
   useEffect(() => {
-    setCarregada(false);
-    const img = imgRef.current;
-    if (img && img.complete && img.naturalWidth > 0) {
-      desenharPrimeiroFrame();
+    return () => {
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+    };
+  }, [blobUrl]);
+
+  useEffect(() => {
+    if (blobUrl) {
+      URL.revokeObjectURL(blobUrl);
+      setBlobUrl(null);
     }
-  }, [src, desenharPrimeiroFrame]);
+    baixandoRef.current = false;
+  }, [srcAnimado]);
+
+  useEffect(() => {
+    if (!animar || !srcAnimado) return;
+
+    setCicloAnimacao((c) => c + 1);
+
+    if (!blobUrl && !baixandoRef.current) {
+      baixandoRef.current = true;
+      fetch(srcAnimado)
+        .then((res) => (res.ok ? res.blob() : null))
+        .then((blob) => {
+          if (blob) {
+            setBlobUrl(URL.createObjectURL(blob));
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          baixandoRef.current = false;
+        });
+    }
+  }, [animar, srcAnimado, blobUrl]);
+
+  const urlParaAnimar = blobUrl || srcAnimado;
+  const mostrarAnimado = animar && Boolean(urlParaAnimar);
 
   return (
     <div
       className={estilos.avatar}
       style={{ width: tamanho, height: tamanho, fontSize: tamanho * 0.4 }}
     >
-      {src ? (
+      {!src ? (
+        nome.charAt(0).toUpperCase()
+      ) : !srcAnimado ? (
+        <img className={estilos.imagem} src={src} alt="" />
+      ) : (
         <>
           <img
-            ref={imgRef}
-            className={`${estilos.imagem} ${animar || !carregada ? estilos.visivel : estilos.oculto}`}
+            className={`${estilos.imagem} ${mostrarAnimado ? estilos.oculto : estilos.visivel}`}
             src={src}
             alt=""
-            onLoad={desenharPrimeiroFrame}
           />
-          <canvas
-            ref={canvasRef}
-            className={`${estilos.canvas} ${!animar && carregada ? estilos.visivel : estilos.oculto}`}
-            style={{ width: tamanho, height: tamanho }}
-          />
+          {mostrarAnimado && (
+            <img
+              key={cicloAnimacao}
+              className={`${estilos.imagem} ${estilos.visivel}`}
+              src={urlParaAnimar}
+              alt=""
+            />
+          )}
         </>
-      ) : (
-        nome.charAt(0).toUpperCase()
       )}
     </div>
   );

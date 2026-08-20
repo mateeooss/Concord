@@ -1,0 +1,63 @@
+.container {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--borda);
+  background: var(--fundo-card);
+}
+
+.entrada {
+  flex: 1;
+  min-height: 38px;
+  max-height: 100px;
+  padding: 9px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.4;
+  color: var(--texto);
+  background: var(--fundo-input);
+  resize: none;
+  transition: border-color 0.12s, background-color 0.12s;
+}
+
+.entrada:focus {
+  outline: none;
+  border-color: var(--roxo);
+  background: var(--fundo-card);
+}
+
+.entrada::placeholder {
+  color: var(--texto-3);
+}
+
+.botaoEnviar {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--roxo);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.12s, transform 0.1s;
+}
+
+.botaoEnviar:hover:not(:disabled) {
+  background: var(--roxo-hover);
+}
+
+.botaoEnviar:disabled {
+  background: var(--desabilitado);
+  cursor: not-allowed;
+}
+
+.botaoEnviar svg {
+  width: 16px;
+  height: 16px;
+}

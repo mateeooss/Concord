@@ -8,6 +8,13 @@
       "when": 1787188866096,
       "tag": "0000_sparkling_piledriver",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787257930336,
+      "tag": "0001_cheerful_thing",
+      "breakpoints": true
     }
   ]
 }

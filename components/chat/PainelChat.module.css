@@ -1,0 +1,72 @@
+.painel {
+  width: 320px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--fundo-card);
+  border-left: 1px solid var(--borda);
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.cabecalho {
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--borda);
+  flex-shrink: 0;
+}
+
+.titulo {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.botaoFechar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  background: transparent;
+  color: var(--texto-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background-color 0.12s;
+}
+
+.botaoFechar:hover {
+  color: var(--texto);
+  border-color: var(--borda-forte);
+  background: var(--fundo-app);
+}
+
+.botaoFechar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.vazio {
+  margin: auto 16px;
+  padding: 24px 16px;
+  border: 1px dashed var(--borda);
+  border-radius: 14px;
+  background: var(--fundo-sutil);
+  text-align: center;
+  color: var(--texto-2);
+  font-size: 13px;
+  line-height: 1.4;
+}

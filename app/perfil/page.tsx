@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
 import { SeletorFoto } from '@/components/perfil/SeletorFoto';
 import { obterDeviceId } from '@/lib/dispositivo';
+import type { AvatarProcessado } from '@/lib/imagem';
 import estilos from './page.module.css';
 
 export default function PaginaPerfil() {
@@ -14,7 +15,7 @@ export default function PaginaPerfil() {
   const mostrarToast = useToast();
 
   const [nome, setNome] = useState('');
-  const [avatar, setAvatar] = useState<Blob | null>(null);
+  const [avatar, setAvatar] = useState<AvatarProcessado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -36,8 +37,11 @@ export default function PaginaPerfil() {
     const dados = new FormData();
     dados.set('deviceId', obterDeviceId());
     dados.set('nome', nome.trim());
-    const nomeArquivo = avatar.type === 'image/gif' ? 'avatar.gif' : 'avatar.webp';
-    dados.set('avatar', avatar, nomeArquivo);
+    const nomeArquivo = avatar.avatar.type === 'image/gif' ? 'avatar.gif' : 'avatar.webp';
+    dados.set('avatar', avatar.avatar, nomeArquivo);
+    if (avatar.avatarEstatico) {
+      dados.set('avatarEstatico', avatar.avatarEstatico, 'avatar-estatico.webp');
+    }
 
     try {
       const resposta = await fetch('/api/participantes', { method: 'POST', body: dados });
@@ -63,8 +67,8 @@ export default function PaginaPerfil() {
 
         <SeletorFoto
           nome={nome}
-          onSelecionar={(blob) => {
-            setAvatar(blob);
+          onSelecionar={(processado) => {
+            setAvatar(processado);
             setErro(null);
           }}
           onErro={(msg) => setErro(msg || null)}

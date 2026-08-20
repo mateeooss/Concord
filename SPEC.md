@@ -97,8 +97,19 @@ desabilitado com o motivo no `title`: "Fulano está compartilhando a tela."
 Ao iniciar, o grid encolhe para uma faixa no topo e o vídeo ocupa o resto.
 Ao parar, volta ao grid.
 
+> **2026-08-20** — adicionado botão de tela cheia no vídeo compartilhado
+> (clique ou duplo-clique), com atalho de teclado nativo (`Esc`) para sair.
+> Fora do escopo original desta seção, pedido pelo usuário durante a Fase 5.
+
 Qualidade: `contentHint: 'detail'`, resolução preservada até 1440p, bitrate
 máximo de 10 Mbps, VP9 com fallback automático para VP8.
+
+> **2026-08-20** — fallback para VP8 removido (`backupCodec` retirado de
+> `lib/constantes.ts`). Causava `ConnectionError` no Firefox ao negociar dois
+> codecs simultâneos para a mesma faixa. Hoje a publicação é só VP9; um
+> participante em navegador sem suporte a decodificar VP9 (ex.: Safari/iOS
+> antigo) não vê a tela compartilhada, sem aviso na tela. Decisão pendente de
+> confirmação — ver conversa no `agy.md` item 6.
 
 ### 5.4 Áudio
 
@@ -154,6 +165,27 @@ comportamento esperado na v1.
   contornado, o servidor não confia nele.
 - Guardado como blob no SQLite, servido por
   `GET /api/participants/[id]/avatar` com `ETag` e `Cache-Control` longo.
+
+> **2026-08-20** — pedido do usuário: suporte a `image/gif` como avatar
+> animado (anima ao falar, congela no frame parado). GIF não passa pelo
+> pipeline de corte/WebP acima — vai para o banco como veio, sem re-encode.
+> Para acomodar isso o limite de entrada subiu de **5 MB** para **15 MB**,
+> no cliente (`lib/imagem.ts`) e no servidor (`lib/constantes.ts`,
+> `AVATAR_TAMANHO_MAX_*`).
+>
+> Resolvido: junto do upload, o cliente também extrai um frame estático do
+> GIF (mesmo pipeline de corte/WebP 256×256) e envia os dois — o original
+> (`avatar`) e o estático (`avatarEstatico`, coluna nova em `participantes`).
+> O teto de **64 KB** original virou `AVATAR_PROCESSADO_TAMANHO_MAX` (256 KB,
+> folga sobre o típico 15–25 KB) e vale pros dois: o `avatar` quando não é
+> GIF, e o `avatarEstatico` sempre que existe. Só o GIF original fica sujeito
+> ao teto de 15 MB — ele nunca é comprimido, é a peça que anima.
+>
+> Leitura: `GET /api/participantes/[id]/avatar?variante=estatico|animado`.
+> `estatico` (padrão) devolve `avatarEstatico` se existir, senão `avatar`
+> direto. `animado` sempre devolve `avatar`. O cliente busca `estatico` de
+> cara e só busca `animado` na primeira vez que a pessoa fala — depois disso
+> fica em cache, sem nova requisição enquanto a aba não recarrega.
 
 Nenhum arquivo de imagem em disco. O banco é a fonte única.
 

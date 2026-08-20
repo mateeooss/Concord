@@ -11,8 +11,7 @@
   flex-shrink: 0;
 }
 
-.imagem,
-.canvas {
+.imagem {
   position: absolute;
   inset: 0;
   width: 100%;

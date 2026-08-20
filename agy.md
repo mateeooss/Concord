@@ -168,7 +168,7 @@ Ao trocar a foto de perfil por um novo arquivo (ou GIF) e entrar na sala, o avat
 2. **Ciclo de Vida do `onLoad` em Imagens em Cache:** No componente `Avatar.tsx`, quando a imagem já estava carregada no cache do navegador antes do listener `onLoad` ser registrado, o evento não disparava novamente, mantendo o canvas em estado não-inicializado.
 
 ### Correções
-1. Alterado `Cache-Control` na rota do avatar para `no-store, no-cache, must-revalidate`. O navegador agora revalida com `ETag` (que contém o timestamp `vistoEm` atualizado no banco SQLite), recebendo a nova foto imediatamente ao trocar de perfil.
+1. Alterado `Cache-Control` na rota do avatar para `no-cache, must-revalidate` (sem `no-store`). O navegador agora armazena em cache e envia o header `If-None-Match` com o `ETag`, recebendo resposta `304 Not Modified` instantânea com 0 bytes de payload quando não houver mudanças, ou a nova imagem quando o perfil for atualizado.
 2. No `Avatar.tsx`, adicionada checagem no `useEffect` para `if (img.complete && img.naturalWidth > 0) desenharPrimeiroFrame()`, além de manter a tag `<img>` visível como fallback até a conclusão do desenho do frame no canvas.
 3. Adicionado timestamp de sessão `?t=${participant.joinedAt}` nas tags de imagem para invalidar o cache de memória do Chrome de forma determinística.
 
@@ -211,6 +211,85 @@ Ao trocar a foto de perfil por um novo arquivo (ou GIF) e entrar na sala, o avat
 4. **Acessibilidade e Usabilidade:**
    - Fechamento automático do menu ao clicar fora (*click outside*) ou ao pressionar a tecla `Escape`.
    - Marcação com `IconeCheck` e fundo `--roxo-suave` no microfone ativo no momento.
+
+---
+
+## 13. Otimização de Requisição Única no Avatar e Revalidação ETag 304
+
+### O que foi feito:
+1. **Requisição Única por Avatar (Zero Desperdício):**
+   - Em `components/ui/Avatar.tsx`, eliminados o `fetch()` redundante e a criação de `new Image()`.
+   - A tag `<img />` realiza a **única requisição HTTP necessária**.
+   - No evento `onLoad`, o frame inicial é capturado diretamente no `<canvas>` para o estado de silêncio/mute, enquanto a tag `<img>` permanece pronta para animar ao falar.
+---
+
+## 14. Implementação da Fase 7 — Chat de Texto Persistido
+
+### O que foi feito:
+1. **Persistência no SQLite (`mensagens`):**
+   - Implementadas as funções `inserirMensagem` e `buscarUltimasMensagens` em `lib/db/queries.ts`, associando mensagens aos participantes e à sala.
+   - Criados os endpoints `GET /api/mensagens` (resgatando até 200 mensagens com nome e avatar) e `POST /api/mensagens` (com validações de tamanho, participante existente e sanitização).
+
+2. **Tempo Real com LiveKit DataChannel:**
+   - Ao gravar via `POST`, o cliente remetente faz o broadcast de um payload leve `{ tipo: 'nova_mensagem', mensagem }` usando `room.localParticipant.publishData(..., { reliable: true })`.
+   - Demais clientes na sala escutam o evento `RoomEvent.DataReceived` e atualizam a lista de mensagens instantaneamente, sem polling.
+
+3. **Painel Lateral de Chat (320px):**
+   - Criado o componente `components/chat/PainelChat.tsx` e `PainelChat.module.css` acoplado à direita da sala.
+   - Scroll automático ancorado na mensagem mais recente (`scrollIntoView`).
+   - Estado vazio estilizado conforme `DESIGN-SYSTEM.md` §7 quando não houver mensagens.
+
+4. **Agrupamento de Mensagens por Autor:**
+   - Criado o componente `components/chat/ItemMensagem.tsx` e `ItemMensagem.module.css`.
+   - Mensagens consecutivas do mesmo participante enviadas em um intervalo de até 5 minutos agrupam visualmente (ocultando avatar e nome repetidos, e mostrando horário sutil no hover).
+
+5. **Composer e Envio:**
+   - Criado `components/chat/ComposerChat.tsx` e `ComposerChat.module.css`.
+   - Suporte a envio ao pressionar `Enter` e quebra de linha com `Shift+Enter`.
+
+---
+
+## 15. Correção de Foreign Key na Inserção de Mensagens (`lib/db/queries.ts`)
+
+### Problema
+Ao tentar enviar uma mensagem de texto, a rota `POST /api/mensagens` retornava erro HTTP 500 (`Erro ao processar mensagem.`).
+
+### Causa
+A tabela `salas` possui um `id` UUID e uma coluna `slug` (`'geral'`). A tabela `mensagens` possui uma chave estrangeira referenciando `salas.id`. Como o frontend enviava o slug textual `'geral'`, o SQLite disparava erro de violação de chave estrangeira (*FOREIGN KEY constraint failed*).
+
+### Correção
+1. Extraída a função auxiliar `resolverSala(slugOuId: string): Sala | undefined` em `lib/db/queries.ts`, centralizando a busca por `slug` ou `id` em um ponto único (DRY).
+2. Se a sala não existir, as funções retornam `undefined` / `[]` em vez de criar ou redirecionar silenciosamente para a sala padrão, e as rotas `GET /api/mensagens` e `POST /api/mensagens` devolvem `HTTP 404: "Sala não encontrada."` de forma estrita e segura.
+
+
+---
+
+## 16. Reinício Determinístico do GIF no Frame 0 com Cache em Blob URL Local
+
+### Problema
+Ao remontar a tag `<img>` animada a cada início de fala para reiniciar o GIF no Frame 0, o navegador disparava uma consulta de revalidação condicional de rede (`304 Not Modified`) a cada início de fala devido ao cabeçalho `Cache-Control: no-cache, must-revalidate`.
+
+### Correção
+No componente `components/ui/Avatar.tsx`:
+1. Na primeira fala do participante, o cliente faz um único `fetch(srcAnimado)` e gera uma URL local em memória via `URL.createObjectURL(blob)`.
+2. Nas falas subsequentes, a nova `<img>` é montada apontando para a URL local do `blob:`.
+3. **Resultado:** O GIF reinicia sempre do Frame 0 (do início) em todas as falas **sem fazer nenhuma requisição de rede após o download inicial**.
+4. Limpeza automática com `URL.revokeObjectURL(blobUrl)` no desmonte.
+
+---
+
+## 17. Alinhamento de Tipografia no Chat (`DESIGN-SYSTEM.md` §4)
+
+### O que foi feito:
+- Em `components/chat/ItemMensagem.module.css`:
+  - `.hora` alinhado estritamente para `font-size: 12px;` (`--texto-2`).
+  - `.horaFlutuante` alinhado estritamente para `font-size: 11px;` (`--texto-3`).
+- Eliminado o valor não documentado de `10px`.
+
+
+
+
+
 
 
 

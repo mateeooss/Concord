@@ -1,0 +1,1 @@
+ALTER TABLE `participantes` ADD `avatar_estatico` blob;

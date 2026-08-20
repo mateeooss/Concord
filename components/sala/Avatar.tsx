@@ -17,16 +17,17 @@ export function Avatar({ participant, tamanho }: Props) {
 
   const classes = [estilos.avatar, falando && !isMuted && estilos.falando].filter(Boolean).join(' ');
 
+  const base = participant.identity
+    ? `/api/participantes/${participant.identity}/avatar?t=${participant.joinedAt?.getTime() ?? 0}`
+    : undefined;
+
   return (
     <div className={estilos.item}>
       <div className={classes} style={{ width: tamanho, height: tamanho }}>
         <AvatarBase
           nome={participant.name || '?'}
-          src={
-            participant.identity
-              ? `/api/participantes/${participant.identity}/avatar?t=${participant.joinedAt?.getTime() ?? 0}`
-              : undefined
-          }
+          src={base ? `${base}&variante=estatico` : undefined}
+          srcAnimado={base ? `${base}&variante=animado` : undefined}
           tamanho={tamanho}
           animar={falando && !isMuted}
         />

@@ -2,7 +2,6 @@ import {
   AVATAR_DIMENSAO,
   AVATAR_QUALIDADE_WEBP,
   AVATAR_TAMANHO_MAX_CLIENTE,
-  AVATAR_TAMANHO_MAX_SERVIDOR,
 } from './constantes';
 
 const TIPOS_ACEITOS = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
@@ -17,11 +16,22 @@ export function validarImagem(arquivo: File): string | null {
   return null;
 }
 
-export async function processarAvatar(arquivo: File): Promise<Blob> {
+export type AvatarProcessado = {
+  avatar: Blob;
+  avatarEstatico: Blob | null;
+};
+
+export async function processarAvatar(arquivo: File): Promise<AvatarProcessado> {
+  const estatico = await recortarQuadradoWebp(arquivo);
+
   if (arquivo.type === 'image/gif') {
-    return arquivo;
+    return { avatar: arquivo, avatarEstatico: estatico };
   }
 
+  return { avatar: estatico, avatarEstatico: null };
+}
+
+async function recortarQuadradoWebp(arquivo: File): Promise<Blob> {
   const bitmap = await createImageBitmap(arquivo);
   const lado = Math.min(bitmap.width, bitmap.height);
   const origemX = (bitmap.width - lado) / 2;

@@ -12,6 +12,7 @@ export const participantes = sqliteTable('participantes', {
   nome: text('nome').notNull(),
   avatar: blob('avatar', { mode: 'buffer' }).notNull(),
   avatarMime: text('avatar_mime').notNull(),
+  avatarEstatico: blob('avatar_estatico', { mode: 'buffer' }),
   criadoEm: integer('criado_em', { mode: 'timestamp' }).notNull(),
   vistoEm: integer('visto_em', { mode: 'timestamp' }).notNull(),
 });

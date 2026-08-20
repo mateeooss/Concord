@@ -1,0 +1,78 @@
+.bloco {
+  display: flex;
+  gap: 10px;
+  padding: 6px 12px;
+  transition: background-color 0.12s;
+}
+
+.bloco:hover {
+  background-color: var(--fundo-sutil);
+}
+
+.blocoAgrupado {
+  display: flex;
+  padding: 2px 12px 2px 48px;
+  position: relative;
+  transition: background-color 0.12s;
+}
+
+.blocoAgrupado:hover {
+  background-color: var(--fundo-sutil);
+}
+
+.avatarContainer {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+}
+
+.conteudo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.autor {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.hora {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--texto-2);
+}
+
+.horaFlutuante {
+  display: none;
+  position: absolute;
+  left: 8px;
+  top: 3px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--texto-3);
+  width: 32px;
+  text-align: right;
+}
+
+.blocoAgrupado:hover .horaFlutuante {
+  display: block;
+}
+
+.texto {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--texto);
+  word-break: break-word;
+  white-space: pre-wrap;
+}

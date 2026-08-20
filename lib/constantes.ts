@@ -4,6 +4,7 @@ export const AVATAR_TAMANHO_MAX_CLIENTE = 15 * 1024 * 1024; // 15 MB, antes do u
 export const AVATAR_TAMANHO_MAX_SERVIDOR = 15 * 1024 * 1024; // 15 MB, revalidado no servidor (suporta GIFs)
 export const AVATAR_DIMENSAO = 256; // px, corte central quadrado
 export const AVATAR_QUALIDADE_WEBP = 0.85;
+export const AVATAR_PROCESSADO_TAMANHO_MAX = 256 * 1024; // 256 KB, teto do WebP processado (avatar estático ou avatar comum)
 
 
 
