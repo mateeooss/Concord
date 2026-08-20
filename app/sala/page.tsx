@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Sala } from '@/components/sala/Sala';
 import { obterDeviceId } from '@/lib/dispositivo';
 
-type SessaoLiveKit = { token: string; url: string };
+type SessaoLiveKit = { token: string; url: string; ehHost: boolean };
 
 export default function PaginaSala() {
   const router = useRouter();
@@ -22,6 +22,9 @@ export default function PaginaSala() {
         return;
       }
 
+      const dadosSessao = await respostaSessao.json();
+      const ehHost = Boolean(dadosSessao.ehHost);
+
       const respostaToken = await fetch('/api/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,7 +37,7 @@ export default function PaginaSala() {
 
       const { token, url } = await respostaToken.json();
       if (!cancelado) {
-        setSessao({ token, url });
+        setSessao({ token, url, ehHost });
       }
     }
 
@@ -49,5 +52,5 @@ export default function PaginaSala() {
 
   if (!sessao) return null;
 
-  return <Sala token={sessao.token} url={sessao.url} />;
+  return <Sala token={sessao.token} url={sessao.url} ehHost={sessao.ehHost} />;
 }

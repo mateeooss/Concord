@@ -278,13 +278,35 @@ No componente `components/ui/Avatar.tsx`:
 
 ---
 
-## 17. Alinhamento de Tipografia no Chat (`DESIGN-SYSTEM.md` §4)
+---
+
+## 18. Implementação da Fase 8 — Moderação
 
 ### O que foi feito:
-- Em `components/chat/ItemMensagem.module.css`:
-  - `.hora` alinhado estritamente para `font-size: 12px;` (`--texto-2`).
-  - `.horaFlutuante` alinhado estritamente para `font-size: 11px;` (`--texto-3`).
-- Eliminado o valor não documentado de `10px`.
+1. **Camada Administrativa LiveKit (`lib/livekit/admin.ts`):**
+   - Implementadas as funções `mutarParticipante` e `removerParticipante` utilizando `RoomServiceClient` do `livekit-server-sdk`.
+   - `mutarParticipante` localiza a faixa de microfone (`TrackSource.MICROPHONE` / áudio) e força o mute via `mutePublishedTrack` (o participante é silenciado na hora, mas mantém total liberdade para desmutar a si próprio).
+   - `removerParticipante` encerra a sessão WebRTC do participante via `removeParticipant`.
+
+2. **Segurança e Rota de Moderação (`POST /api/moderacao`):**
+   - Validação estrita no servidor via `ehHost(request)` (`lib/host.ts`).
+   - Se um convidado (via túnel ngrok com `x-forwarded-for`) tentar chamar a rota diretamente pelo DevTools/Postman, o servidor rejeita com `HTTP 403 Forbidden: { erro: 'Apenas o host pode realizar ações de moderação.' }`.
+
+3. **Fonte Única de Papel de Host (`GET /api/sessao` e `Sala.tsx`):**
+   - O endpoint `GET /api/sessao` retorna `ehHost: boolean`.
+   - A página `app/sala/page.tsx` lê essa flag uma única vez e a repassa via props (`<Sala ehHost={ehHost} />` → `<Grid />` / `<Avatar />` / `<FaixaAvatares />`).
+
+4. **Interface de Moderação no Hover do Avatar:**
+   - Em `components/sala/Avatar.tsx` e `components/sala/FaixaAvatares.tsx`, quando `ehHost === true` e o avatar não for do próprio host (`!participant.isLocal`), surge uma sobreposição no hover com dois botões:
+     - **Mutar:** Ícone `IconeMicCortado` silencia o participante e exibe toast de confirmação.
+     - **Remover:** Ícone `IconeRemover` (destaque visual em tom de erro `--erro`) desconecta o participante e exibe toast.
+   - Para convidados, os botões não são renderizados.
+
+5. **Tratamento Resiliente de Desconexão:**
+   - No cliente, escuta o evento `RoomEvent.Disconnected`.
+   - Apenas se `reason === DisconnectReason.PARTICIPANT_REMOVED`, o convidado é informado via toast e redirecionado para `/perfil`.
+   - Oscilações de Wi-Fi e blips temporários de rede não expulsam o usuário, permitindo que o LiveKit tente reconectar sozinho automaticamente.
+
 
 
 

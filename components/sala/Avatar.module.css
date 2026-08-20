@@ -20,6 +20,57 @@
   box-shadow: 0 0 0 3px var(--roxo);
 }
 
+.acoesModeracao {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+  z-index: 5;
+}
+
+.avatar:hover .acoesModeracao {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.botaoModeracao {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s, border-color 0.12s, transform 0.1s;
+}
+
+.botaoModeracao:hover {
+  background: var(--fundo-app);
+  border-color: var(--borda-forte);
+  transform: scale(1.08);
+}
+
+.botaoModeracao svg {
+  width: 14px;
+  height: 14px;
+}
+
+.botaoExpulsar:hover {
+  background: var(--erro);
+  border-color: var(--erro);
+  color: #fff;
+}
+
 .iconeMutado {
   position: absolute;
   bottom: 0;
@@ -32,8 +83,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 4;
 }
-.iconeMutado svg { width: 12px; height: 12px; }
+
+.iconeMutado svg {
+  width: 12px;
+  height: 12px;
+}
 
 .nome {
   font-size: 14px;
@@ -50,6 +106,9 @@
     transition-duration: .01ms;
   }
   .avatar.falando {
+    transform: none;
+  }
+  .botaoModeracao:hover {
     transform: none;
   }
 }

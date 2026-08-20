@@ -32,6 +32,51 @@
   box-shadow: 0 0 0 2px var(--roxo);
 }
 
+.acoesModeracao {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+  z-index: 5;
+}
+
+.avatar:hover .acoesModeracao {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.botaoModeracao {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.botaoModeracao svg {
+  width: 10px;
+  height: 10px;
+}
+
+.botaoExpulsar:hover {
+  background: var(--erro);
+  border-color: var(--erro);
+  color: #fff;
+}
+
 .iconeMutado {
   position: absolute;
   bottom: -2px;
@@ -44,6 +89,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 4;
 }
 
 .iconeMutado svg {

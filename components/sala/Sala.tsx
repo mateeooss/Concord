@@ -2,11 +2,19 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { Track, RoomEvent, type RoomOptions, type RoomConnectOptions } from 'livekit-client';
+import { useRouter } from 'next/navigation';
+import {
+  Track,
+  RoomEvent,
+  DisconnectReason,
+  type RoomOptions,
+  type RoomConnectOptions,
+} from 'livekit-client';
 import { LiveKitRoom, RoomAudioRenderer, useTracks, useRoomContext } from '@livekit/components-react';
 import { OPCOES_AUDIO, SALA_PADRAO } from '@/lib/constantes';
 import { obterDeviceId } from '@/lib/dispositivo';
 import type { MensagemComAutor } from '@/lib/db/queries';
+import { useToast } from '@/components/ui/Toast';
 import { PainelChat } from '@/components/chat/PainelChat';
 import { Grid } from './Grid';
 import { FaixaAvatares } from './FaixaAvatares';
@@ -17,6 +25,7 @@ import estilos from './Sala.module.css';
 type Props = {
   token: string;
   url: string;
+  ehHost?: boolean;
 };
 
 const OPCOES_SALA: RoomOptions = {
@@ -31,24 +40,26 @@ const OPCOES_CONEXAO: RoomConnectOptions = {
   peerConnectionTimeout: 30_000,
 };
 
-function AreaPrincipal() {
+function AreaPrincipal({ ehHost }: { ehHost: boolean }) {
   const faixasTela = useTracks([Track.Source.ScreenShare]);
   const faixaTelaAtiva = faixasTela[0];
 
   if (faixaTelaAtiva) {
     return (
       <div className={estilos.apresentacao}>
-        <FaixaAvatares />
+        <FaixaAvatares ehHost={ehHost} />
         <TelaCompartilhada trackRef={faixaTelaAtiva} />
       </div>
     );
   }
 
-  return <Grid />;
+  return <Grid ehHost={ehHost} />;
 }
 
-function ConteudoSala() {
+function ConteudoSala({ ehHost }: { ehHost: boolean }) {
   const room = useRoomContext();
+  const router = useRouter();
+  const mostrarToast = useToast();
   const [chatAberto, setChatAberto] = useState(false);
   const [naoLidas, setNaoLidas] = useState(0);
   const [mensagens, setMensagens] = useState<MensagemComAutor[]>([]);
@@ -56,6 +67,20 @@ function ConteudoSala() {
 
   const chatAbertoRef = useRef(chatAberto);
   chatAbertoRef.current = chatAberto;
+
+  useEffect(() => {
+    const lidarComDesconexao = (reason?: DisconnectReason) => {
+      if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
+        mostrarToast('Você foi removido da sala pelo moderador.');
+        router.replace('/perfil');
+      }
+    };
+
+    room.on(RoomEvent.Disconnected, lidarComDesconexao);
+    return () => {
+      room.off(RoomEvent.Disconnected, lidarComDesconexao);
+    };
+  }, [room, router, mostrarToast]);
 
   useEffect(() => {
     let cancelado = false;
@@ -136,7 +161,7 @@ function ConteudoSala() {
   return (
     <div className={estilos.corpo}>
       <div className={estilos.areaCentral}>
-        <AreaPrincipal />
+        <AreaPrincipal ehHost={ehHost} />
         <BarraControles
           chatAberto={chatAberto}
           onAlternarChat={() => {
@@ -164,7 +189,7 @@ function ConteudoSala() {
   );
 }
 
-export function Sala({ token, url }: Props) {
+export function Sala({ token, url, ehHost = false }: Props) {
   return (
     <LiveKitRoom
       serverUrl={url}
@@ -176,7 +201,7 @@ export function Sala({ token, url }: Props) {
       className={estilos.shell}
     >
       <RoomAudioRenderer />
-      <ConteudoSala />
+      <ConteudoSala ehHost={ehHost} />
     </LiveKitRoom>
   );
 }

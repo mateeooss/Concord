@@ -72,6 +72,12 @@ grudados na mesma entidade (`lib/db/schema.ts`). Pra ter canal de texto sem
 voz associada (ou vice-versa) precisa de uma coluna `tipo` nova (`'texto' |
 'voz'`, ou parecido) em `salas` antes disso virar spec.
 
+Também em aberto: a Fase 8 (Moderação) do `PLAN.md` manda "Remover" desconectar
+e devolver à tela de perfil — certo pra v1, que só tem uma sala. Com múltiplos
+canais, "remover" passa a ter duas leituras possíveis: tirar só daquele canal
+de voz (volta pro app, pode entrar em outro) ou expulsar do app inteiro (volta
+pro perfil, como hoje). Decidir isso faz parte de virar spec.
+
 ### Entrar/sair da chamada de voz sob demanda
 
 Hoje `Sala.tsx` conecta ao LiveKit e já entra na chamada de voz imediatamente ao carregar a tela (`<LiveKitRoom connect audio={OPCOES_AUDIO}>`).
