@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ToastProvider } from '@/components/ui/Toast';
 import '@/styles/tokens.css';
 import '@/styles/globals.css';
 
@@ -33,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: scriptTema }} />
         <meta name="color-scheme" content="light dark" />
       </head>
-      <body>{children}</body>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }

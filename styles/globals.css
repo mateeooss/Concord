@@ -13,3 +13,75 @@ html, body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--borda); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--borda-forte); }
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--roxo);
+}
+
+/* Botões */
+
+.btn {
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  transition: background-color .12s, border-color .12s, color .12s;
+}
+.btn:disabled { cursor: not-allowed; }
+
+.btn-primario { background: var(--roxo); color: #fff; }
+.btn-primario:hover:not(:disabled) { background: var(--roxo-hover); }
+.btn-primario:disabled { background: var(--desabilitado); }
+
+.btn-secundario { background: var(--fundo-card); border-color: var(--borda); color: var(--texto); }
+.btn-secundario:hover:not(:disabled) { border-color: var(--borda-forte); background: var(--fundo-app); }
+.btn-secundario:disabled { color: var(--texto-2); }
+
+.btn-fantasma { background: transparent; color: var(--texto-2); }
+.btn-fantasma:hover:not(:disabled) { color: var(--texto); border-color: var(--borda); }
+.btn-fantasma:disabled { color: var(--desabilitado); }
+
+.btn-perigo { background: var(--fundo-card); border-color: var(--erro-borda); color: var(--erro); }
+.btn-perigo:hover:not(:disabled) { background: var(--erro-fundo); }
+
+/* Inputs */
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--texto);
+  background: var(--fundo-input);
+  transition: border-color .12s, background-color .12s;
+}
+.input::placeholder { color: var(--texto-3); }
+.input:focus { outline: none; border-color: var(--roxo); background: var(--fundo-card); }
+.input-erro { border-color: var(--erro); background: var(--erro-fundo); }
+
+/* Card */
+
+.card {
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  box-shadow: var(--sombra-card);
+  padding: 24px;
+}
+
+/* Caixas de mensagem */
+
+.caixa-erro {
+  color: var(--erro);
+  background: var(--erro-fundo);
+  border: 1px solid var(--erro-borda);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
