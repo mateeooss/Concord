@@ -39,26 +39,6 @@
   height: 20px;
 }
 
-.botaoMicAtivo {
-  background: var(--roxo);
-  border-color: transparent;
-  color: #fff;
-}
-
-.botaoMicAtivo:hover:not(:disabled) {
-  background: var(--roxo-hover);
-}
-
-.botaoMicMutado {
-  background: var(--fundo-card);
-  border-color: var(--erro-borda);
-  color: var(--erro);
-}
-
-.botaoMicMutado:hover:not(:disabled) {
-  background: var(--erro-fundo);
-}
-
 .botaoTelaAtivo {
   background: var(--roxo);
   border-color: transparent;

@@ -191,6 +191,26 @@ Ao trocar a foto de perfil por um novo arquivo (ou GIF) e entrar na sala, o avat
 
 ### O que foi feito:
 - Em `TelaCompartilhada.module.css`, configurado `width: 100%; height: 100%; object-fit: contain;` e `.container:fullscreen .video { width: 100vw; height: 100vh; }`.
-- **Comportamento:** Qualquer transmissão com resolução inferior à tela ou de proporções variadas agora escala automaticamente até encostar nas bordas horizontais ou verticais da tela sem distorção, ocupando todo o monitor no modo tela cheia.
+---
+
+## 12. Implementação da Fase 6 — Seletor de Microfone
+
+### O que foi feito:
+1. **Botão Dividido (Split Button):**
+   - Criado o componente `components/sala/SeletorMicrofone.tsx` e `SeletorMicrofone.module.css`.
+   - **Corpo (40×40px):** Alterna mute/desmute do microfone com feedback visual imediato (`IconeMic` / `IconeMicCortado`).
+   - **Seta (20×40px):** Abre/fecha o menu dropdown de dispositivos com ícones `IconeChevronCima` e `IconeChevronBaixo`.
+
+2. **Troca a Quente de Dispositivos (`useMediaDeviceSelect`):**
+   - Enumera os microfones disponíveis no sistema com permissões ativas.
+   - Permite alternar o dispositivo ativo em tempo real durante a chamada sem recarregar a página e sem reconectar na sala.
+
+3. **Persistência de Preferência:**
+   - Salva o `deviceId` selecionado em `localStorage` sob `concord:mic` e restaura automaticamente o microfone preferido nas sessões seguintes.
+
+4. **Acessibilidade e Usabilidade:**
+   - Fechamento automático do menu ao clicar fora (*click outside*) ou ao pressionar a tecla `Escape`.
+   - Marcação com `IconeCheck` e fundo `--roxo-suave` no microfone ativo no momento.
+
 
 

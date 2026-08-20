@@ -1,0 +1,192 @@
+.grupo {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.botaoCorpo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid var(--borda);
+  border-right: none;
+  background: var(--fundo-card);
+  color: var(--texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.botaoCorpo:hover:not(:disabled) {
+  border-color: var(--borda-forte);
+  background: var(--fundo-app);
+}
+
+.botaoCorpo:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.botaoCorpo svg {
+  width: 20px;
+  height: 20px;
+}
+
+.botaoSeta {
+  width: 20px;
+  height: 40px;
+  border-radius: 0 8px 8px 0;
+  border: 1px solid var(--borda);
+  background: var(--fundo-card);
+  color: var(--texto-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.botaoSeta:hover:not(:disabled) {
+  border-color: var(--borda-forte);
+  background: var(--fundo-app);
+  color: var(--texto);
+}
+
+.botaoSeta:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.botaoSeta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Microfone Ligado (Ativo) */
+.micAtivo .botaoCorpo {
+  background: var(--roxo);
+  border-color: var(--roxo);
+  color: #fff;
+}
+
+.micAtivo .botaoCorpo:hover:not(:disabled) {
+  background: var(--roxo-hover);
+  border-color: var(--roxo-hover);
+}
+
+.micAtivo .botaoSeta {
+  background: var(--roxo);
+  border-color: var(--roxo);
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.micAtivo .botaoSeta:hover:not(:disabled) {
+  background: var(--roxo-hover);
+  border-color: var(--roxo-hover);
+}
+
+/* Microfone Mutado */
+.micMutado .botaoCorpo {
+  background: var(--fundo-card);
+  border-color: var(--erro-borda);
+  color: var(--erro);
+}
+
+.micMutado .botaoCorpo:hover:not(:disabled) {
+  background: var(--erro-fundo);
+}
+
+.micMutado .botaoSeta {
+  background: var(--fundo-card);
+  border-color: var(--erro-borda);
+  border-left: 1px solid var(--erro-borda);
+  color: var(--texto-2);
+}
+
+.micMutado .botaoSeta:hover:not(:disabled) {
+  background: var(--erro-fundo);
+  color: var(--erro);
+}
+
+/* Menu Dropdown */
+.dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  max-width: 320px;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  box-shadow: var(--sombra-dropdown);
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tituloMenu {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texto-2);
+  padding: 4px 8px 4px;
+  letter-spacing: 0.5px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--texto);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s;
+}
+
+.item:hover {
+  background: var(--fundo-app);
+}
+
+.itemAtivo {
+  background: var(--roxo-suave);
+  color: var(--roxo);
+  font-weight: 600;
+}
+
+.itemAtivo:hover {
+  background: var(--roxo-suave);
+  color: var(--roxo);
+}
+
+.rotuloItem {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.iconeCheck {
+  width: 14px;
+  height: 14px;
+  color: var(--roxo);
+  flex-shrink: 0;
+}
+
+.vazio {
+  padding: 10px 8px;
+  font-size: 12px;
+  color: var(--texto-2);
+  text-align: center;
+}

@@ -117,6 +117,23 @@ export function IconeMinimizar(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function IconeChevronCima(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...propsBase} {...props}>
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  );
+}
+
+export function IconeChevronBaixo(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...propsBase} {...props}>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+
 
 
 
