@@ -152,17 +152,18 @@ DevTools recebe 403.
 
 ---
 
-## Fase 9 — Acabamento
+## Fase 9 — Acabamento (Concluída)
 
-- Percorrer os critérios de aceite do `SPEC.md` seção 11, um a um
-- Estados vazios e de erro em todas as telas
-- Foco visível por teclado em todo controle
-- `prefers-reduced-motion` respeitado
-- Responsivo até 380px
-- Zero `console.error` no fluxo feliz
-- README revisado por alguém que nunca rodou o projeto
+- [x] Percorrer os critérios de aceite do `SPEC.md` seção 11, um a um
+- [x] Estados vazios e de erro em todas as telas
+- [x] Foco visível por teclado em todo controle
+- [x] `prefers-reduced-motion` respeitado
+- [x] Responsivo até 380px
+- [x] Zero `console.error` no fluxo feliz
+- [x] README revisado por alguém que nunca rodou o projeto
 
 **Pronto quando:** um amigo clona o repo e sobe sozinho, só com o README.
+
 
 ---
 

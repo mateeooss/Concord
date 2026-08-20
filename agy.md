@@ -302,10 +302,38 @@ No componente `components/ui/Avatar.tsx`:
      - **Remover:** Ícone `IconeRemover` (destaque visual em tom de erro `--erro`) desconecta o participante e exibe toast.
    - Para convidados, os botões não são renderizados.
 
-5. **Tratamento Resiliente de Desconexão:**
-   - No cliente, escuta o evento `RoomEvent.Disconnected`.
-   - Apenas se `reason === DisconnectReason.PARTICIPANT_REMOVED`, o convidado é informado via toast e redirecionado para `/perfil`.
-   - Oscilações de Wi-Fi e blips temporários de rede não expulsam o usuário, permitindo que o LiveKit tente reconectar sozinho automaticamente.
+---
+
+## 19. Implementação da Fase 9 — Acabamento e Polimento Final da v1
+
+### O que foi feito:
+1. **Acessibilidade e Navegação por Teclado (`styles/globals.css`):**
+   - Padronizado `:focus-visible` global para `outline: 2px solid var(--roxo); outline-offset: 2px;` em todos os elementos interativos (`button`, `input`, `textarea`, `a`, `[role="button"]`).
+   - Reforçado o bloco `@media (prefers-reduced-motion: reduce)` para zerar durações de animação e desativar `transform: scale` em toda a aplicação.
+
+2. **Responsividade Mobile até 380px:**
+   - Em `components/header/Header.module.css`, ajustadas margens, gaps e truncamento de texto para evitar overflow horizontal em viewports estreitas (< 480px e 380px).
+   - Em `components/chat/PainelChat.module.css`, configurado para expandir em tela cheia (`position: absolute; inset: 0; width: 100%; z-index: 40;`) em dispositivos móveis (< 600px).
+
+3. **Estado de Sala Vazia (`components/sala/Grid.tsx` e `Grid.module.css`):**
+   - Centralização vertical e horizontal no grid com hint sutil quando o usuário for a única pessoa na chamada: `"Você é a única pessoa na chamada por enquanto."`.
+
+---
+
+## 20. Refinamentos de Responsividade de Controles e Checklist da v1
+
+### O que foi feito:
+1. **Responsividade da Barra de Controles e Dropdown (`BarraControles.module.css` e `SeletorMicrofone.module.css`):**
+   - Adicionadas media queries para telas <= 480px e 380px, ajustando tamanhos de botões e paddings da barra.
+   - O menu dropdown de dispositivos foi alinhado centralizado com `left: 50%; transform: translateX(-50%); max-width: calc(100vw - 24px);`, eliminando qualquer vazamento nas laterais de telas estreitas.
+
+2. **Consistência de Emojis no `README.md`:**
+   - Removido o emoji do título do README (`# Concord`), garantindo rigor absoluto com as regras do projeto.
+
+3. **Centralização Perfeita dos Avatares no Grid (`Grid.module.css`):**
+   - O container agora utiliza `justify-content: center; align-items: center; margin: auto 0;`, posicionando os avatares exatamente no centro da viewport em qualquer resolução.
+
+
 
 
 

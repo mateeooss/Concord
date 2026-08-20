@@ -9,6 +9,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  gap: 12px;
 }
 
 .logo {
@@ -19,12 +20,14 @@
   text-decoration: none;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .blocoNgrok {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
 }
 
 .ngrokAtivo {
@@ -35,6 +38,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 4px 10px;
+  min-width: 0;
 }
 
 .linkNgrok {
@@ -65,6 +69,7 @@
   justify-content: center;
   transition: color 0.12s, background-color 0.12s;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .botaoCopiar:hover {
@@ -81,6 +86,7 @@
   width: 1px;
   height: 14px;
   background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
 }
 
 .ngrokOculto {
@@ -98,13 +104,15 @@
   color: var(--header-texto-2);
 }
 
-
 .ngrokAusente {
   font-size: 12px;
   color: var(--header-texto-2);
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .comando {
@@ -120,6 +128,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .botaoTema {
@@ -155,6 +164,19 @@
     font-size: 11px;
   }
   .linkNgrok {
-    max-width: 160px;
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  .linkNgrok {
+    max-width: 110px;
+  }
+  .ngrokAusente span:last-child {
+    display: none;
   }
 }

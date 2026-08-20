@@ -70,3 +70,13 @@
   font-size: 13px;
   line-height: 1.4;
 }
+
+@media (max-width: 600px) {
+  .painel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    z-index: 40;
+    border-left: none;
+  }
+}

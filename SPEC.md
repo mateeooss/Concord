@@ -214,14 +214,15 @@ Temas claro e escuro, com toggle no header e default vindo de
 
 ## 11. Critérios de aceite
 
-- [ ] Host abre `localhost:3000` e vê o link do ngrok no topo.
-- [ ] Convidado abre o link, cadastra nome e foto, entra na sala.
-- [ ] Convidado fecha a aba, reabre e cai direto na sala com o perfil dele.
-- [ ] Avatar anima ao falar e escurece ao parar, para todos na sala.
-- [ ] Trocar de microfone pela barra funciona sem reconectar.
-- [ ] Compartilhar tela funciona e trava para os demais enquanto ativo.
-- [ ] Chat persiste depois de reiniciar o servidor.
-- [ ] Host consegue mutar e remover; convidado não vê os controles e recebe
+- [x] Host abre `localhost:3000` e vê o link do ngrok no topo.
+- [x] Convidado abre o link, cadastra nome e foto, entra na sala.
+- [x] Convidado fecha a aba, reabre e cai direto na sala com o perfil dele.
+- [x] Avatar anima ao falar e escurece ao parar, para todos na sala.
+- [x] Trocar de microfone pela barra funciona sem reconectar.
+- [x] Compartilhar tela funciona e trava para os demais enquanto ativo.
+- [x] Chat persiste depois de reiniciar o servidor.
+- [x] Host consegue mutar e remover; convidado não vê os controles e recebe
       403 se chamar a API na mão.
-- [ ] Alternar tema não pisca no carregamento.
-- [ ] Nenhum `console.error` no fluxo feliz.
+- [x] Alternar tema não pisca no carregamento.
+- [x] Nenhum `console.error` no fluxo feliz.
+

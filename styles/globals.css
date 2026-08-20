@@ -15,8 +15,8 @@ html, body {
 ::-webkit-scrollbar-thumb:hover { background: var(--borda-forte); }
 
 :focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--roxo);
+  outline: 2px solid var(--roxo);
+  outline-offset: 2px;
 }
 
 /* Botões */
@@ -104,3 +104,10 @@ html, body {
   overflow: hidden;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

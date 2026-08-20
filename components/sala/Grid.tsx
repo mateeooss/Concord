@@ -12,15 +12,22 @@ export function Grid({ ehHost = false }: Props) {
   const participantes = useParticipants();
 
   return (
-    <div className={estilos.grid}>
-      {participantes.map((participante) => (
-        <Avatar
-          key={participante.identity}
-          participant={participante}
-          tamanho={96}
-          ehHost={ehHost}
-        />
-      ))}
+    <div className={estilos.container}>
+      <div className={estilos.grid}>
+        {participantes.map((participante) => (
+          <Avatar
+            key={participante.identity}
+            participant={participante}
+            tamanho={96}
+            ehHost={ehHost}
+          />
+        ))}
+      </div>
+      {participantes.length <= 1 && (
+        <p className={estilos.dicaSozinho}>
+          Você é a única pessoa na chamada por enquanto.
+        </p>
+      )}
     </div>
   );
 }

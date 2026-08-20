@@ -1,8 +1,30 @@
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 96px);
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 24px;
   flex: 1;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  padding: 32px 24px;
+  overflow-y: auto;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  gap: 32px;
+  max-width: 900px;
+  margin: auto 0;
+}
+
+.dicaSozinho {
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--texto-2);
+  text-align: center;
 }
