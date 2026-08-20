@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ToastProvider } from '@/components/ui/Toast';
+import { Header } from '@/components/header/Header';
 import '@/styles/tokens.css';
 import '@/styles/globals.css';
 
@@ -35,8 +36,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="color-scheme" content="light dark" />
       </head>
       <body>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <div className="shell-global">
+            <Header />
+            <main className="conteudo-global">{children}</main>
+          </div>
+        </ToastProvider>
       </body>
     </html>
   );
 }
+

@@ -85,3 +85,18 @@ html, body {
   padding: 10px 12px;
   font-size: 13px;
 }
+
+/* Casca global */
+
+.shell-global {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.conteudo-global {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+

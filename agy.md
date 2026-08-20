@@ -70,13 +70,39 @@ O app conectava ao WebSocket de sinalização do LiveKit, mas falhava com `Conne
 
 ---
 
-## 4. Arquivos Modificados
+## 4. Implementação da Fase 4 — Header e Link do Ngrok
 
-- `lib/constantes.ts`
-- `livekit.yaml`
-- `app/sala/page.tsx`
-- `components/sala/Sala.tsx`
-- `components/sala/BarraControles.tsx`
-- `components/sala/Avatar.tsx`
+### O que foi feito:
+1. **Descoberta do Ngrok (`lib/ngrok.ts` & `app/api/ngrok/route.ts`):**
+   - Criada a função `obterStatusNgrok()` com timeout estrito de 1s via `AbortSignal.timeout(1000)` consultando `http://127.0.0.1:4040/api/tunnels`.
+   - Rota `GET /api/ngrok` dinâmica que retorna `{ estado: 'ativo', url: '...' }` ou `{ estado: 'ausente' }`.
+
+2. **Componente Header (`components/header/Header.tsx` & `.module.css`):**
+   - Altura de 52px com fundo `--header` (`#2d1f3d`) fixo/sticky no topo.
+   - Logo CONCORD com tipografia conforme Design System (15px, peso 700, 2px letter-spacing).
+   - **Privacidade Host vs Convidado:**
+     - **Convidados (`ehHost: false`):** O bloco do Ngrok é totalmente oculto.
+     - **Host (`ehHost: true`):** Exibe a URL pública e botão de cópia com um botão de alternância rápida de visibilidade (ícone de olho) para ocultar/exibir o link durante a sessão.
+     - **Ngrok ausente (Host):** Exibe a instrução `"ngrok não detectado — rode ngrok http 3000 para gerar o link."`
+   - Botão de alternância de tema (Sol/Lua) no topo direito, alternando `data-tema` no `<html>` e gravando em `localStorage` sob `concord:tema`.
+
+
+3. **Integração Global no Layout (`app/layout.tsx` & `styles/globals.css`):**
+   - Inserido `<Header />` na raiz da aplicação.
+   - Ajustadas as alturas das páginas (`app/perfil/page.module.css` e `components/sala/Sala.module.css`) com `flex: 1` para eliminar barras de rolagem duplicadas.
+
+---
+
+## 5. Arquivos Modificados / Criados na Fase 4
+
+- `lib/ngrok.ts` (novo)
+- `app/api/ngrok/route.ts` (novo)
+- `components/ui/icones.tsx`
+- `components/header/Header.module.css` (novo)
+- `components/header/Header.tsx` (novo)
+- `styles/globals.css`
+- `app/layout.tsx`
+- `app/perfil/page.module.css`
+- `components/sala/Sala.module.css`
 - `agy.md`
 
